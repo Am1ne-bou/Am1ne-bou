@@ -21,18 +21,22 @@ checks the deployed result from outside the host rather than trusting exit codes
 Medium-interaction SSH honeypot. Live on a public VPS since May 2026, running
 unattended under systemd with log rotation and CI.
 
-105,980 authentication attempts from 2,397 unique source IPs, through 2026-07-29
+190,862 authentication attempts from 3,069 unique source IPs, through 2026-08-23
 - see [FINDINGS.md](https://github.com/Am1ne-bou/ssh-honeypot/blob/main/FINDINGS.md).
 
 Emulated shell (~80 commands, virtual filesystem) and a full SCP wire-protocol
-implementation - enough that bots run their whole kill chain and drop real
-payloads on it. Containment is treated as seriously as the bait: unprivileged
-systemd service (NoNewPrivileges, ProtectSystem=strict), never root, the real
-sshd moved off port 22, captured payloads quarantined read-only and sha256-named.
-Sessions are logged as JSON and analysed offline with a Python pipeline -
-fingerprinting, clustering into attack families, MITRE ATT&CK mapping in
-progress. Passive payload triage only: no reverse engineering, no alerting in
-service.
+implementation - enough that bots run their whole kill chain and drop real payloads
+on it. Containment is treated as seriously as the bait: unprivileged systemd service
+(NoNewPrivileges, ProtectSystem=strict), never root, the real sshd moved off port 22,
+captured payloads quarantined read-only and sha256-named.
+
+Sessions are logged as JSON and grouped offline by exact command sequence - hash the
+commands, count what shares a hash. Echo-injection runs have to be folded first, or the
+bot that writes a binary in 43,000 echo commands makes every session it touches unique.
+Volume points the wrong way: the largest cluster is 139,336 sessions writing "ok" to
+stdout, while the family worth reading is six sessions looking for Telegram session
+files and GSM modem device nodes. 
+Passive payload triage only: no reverse engineering, no alerting in service.
 
 ### [DOR](https://github.com/Am1ne-bou/DOR) - Go
 
