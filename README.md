@@ -21,7 +21,7 @@ checks the deployed result from outside the host rather than trusting exit codes
 Medium-interaction SSH honeypot. Live on a public VPS since May 2026, running
 unattended under systemd with log rotation and CI.
 
-190,862 authentication attempts from 3,069 unique source IPs, through 2026-08-23
+225,871 authentication attempts from 6,631 unique source IPs, through 2026-09-29
 - see [FINDINGS.md](https://github.com/Am1ne-bou/ssh-honeypot/blob/main/FINDINGS.md).
 
 Emulated shell (~80 commands, virtual filesystem) and a full SCP wire-protocol
@@ -33,9 +33,10 @@ captured payloads quarantined read-only and sha256-named.
 Sessions are logged as JSON and grouped offline by exact command sequence - hash the
 commands, count what shares a hash. Echo-injection runs have to be folded first, or the
 bot that writes a binary in 43,000 echo commands makes every session it touches unique.
-Volume points the wrong way: the largest cluster is 139,336 sessions writing "ok" to
-stdout, while the family worth reading is six sessions looking for Telegram session
-files and GSM modem device nodes. 
+Volume points the wrong way: the largest cluster is 155,164 sessions writing "ok" to
+stdout, while the family worth reading is two sessions that make the shell prove itself -
+`echo $((7*191+3))` has to come back 1340 or the bot calls it fake and leaves, a
+proof-of-work check running inside the honeypot it is trying to rule out.
 Passive payload triage only: no reverse engineering, no alerting in service.
 
 ### [DOR](https://github.com/Am1ne-bou/DOR) - Go
@@ -84,4 +85,3 @@ later step.
 
 <!-- TODO: once the GitHub Pages site is live, restore the site link here:
      [LinkedIn](https://www.linkedin.com/in/mohamed-amine-boussenna-25806738a/) - [Am1ne-bou.github.io](https://Am1ne-bou.github.io) -->
-
